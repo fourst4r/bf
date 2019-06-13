@@ -74,18 +74,10 @@ impl Bf {
 
     fn execute(&mut self, instruction: u8) {
         match instruction as char {
-            '>' => { 
-                self.ptr = self.ptr.wrapping_add(1);
-            },
-            '<' => {
-                self.ptr = self.ptr.wrapping_sub(1);
-            },
-            '+' => {
-                self.tape[self.ptr] = self.tape[self.ptr].wrapping_add(1);
-            }
-            '-' => {
-                self.tape[self.ptr] = self.tape[self.ptr].wrapping_sub(1);
-            },
+            '>' => self.ptr = self.ptr.wrapping_add(1),
+            '<' => self.ptr = self.ptr.wrapping_sub(1),
+            '+' => self.tape[self.ptr] = self.tape[self.ptr].wrapping_add(1),
+            '-' => self.tape[self.ptr] = self.tape[self.ptr].wrapping_sub(1),
             '.' => {
                 let ch = {
                     if self.tape[self.ptr] == 10 {
