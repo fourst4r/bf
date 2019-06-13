@@ -29,8 +29,8 @@ impl Bf {
         }
     }
 
-    pub fn run(&mut self, instructions: &str) -> Result<(), String> {
-        let bytes = instructions.as_bytes();
+    pub fn run(&mut self, script: &str) -> Result<(), String> {
+        let bytes = script.as_bytes();
         
         // match the braces first
         self.pc = 0;
