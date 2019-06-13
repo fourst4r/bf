@@ -30,16 +30,16 @@ impl Bf {
     }
 
     pub fn run(&mut self, instructions: &str) -> Result<(), String> {
-        let chars = instructions.as_bytes();
+        let bytes = instructions.as_bytes();
         
         // match the braces first
         self.pc = 0;
         loop {
-            let instruction = chars[self.pc];
-            if instruction == '[' as u8 {
+            let instruction = bytes[self.pc] as char;
+            if instruction == '[' {
                 self.stack.push(self.pc);
             }
-            else if instruction == ']' as u8 {
+            else if instruction == ']' {
                 if let Some(open) = self.stack.pop() {
                     self.braces[self.pc] = open;
                     self.braces[open] = self.pc;
@@ -50,7 +50,7 @@ impl Bf {
             }
 
             self.pc += 1;
-            if self.pc == chars.len() {
+            if self.pc == bytes.len() {
                 if let Some(open) = self.stack.pop() {
                     return Err(format!("unmatched '[' at byte {}", open));
                 }
@@ -61,11 +61,11 @@ impl Bf {
         // now execute
         self.pc = 0;
         loop {
-            let instruction = chars[self.pc];
+            let instruction = bytes[self.pc];
             self.execute(instruction);
              
             self.pc += 1;
-            if self.pc == chars.len() {
+            if self.pc == bytes.len() {
                 break;
             }
         }
