@@ -1,7 +1,4 @@
-use std::io;
-use std::io::{Read, Write};
-use std::fs::File;
-use std::env;
+use std::{io::{self, Read, Write}, fs::File, env};
 
 pub struct Bf {
     pc: usize,
@@ -43,8 +40,7 @@ impl Bf {
                 if let Some(open) = self.stack.pop() {
                     self.braces[self.pc] = open;
                     self.braces[open] = self.pc;
-                }
-                else {
+                } else {
                     return Err(format!("unmatched ']' at byte {}", self.pc));
                 }
             }
@@ -79,39 +75,21 @@ impl Bf {
             '+' => self.tape[self.ptr] = self.tape[self.ptr].wrapping_add(1),
             '-' => self.tape[self.ptr] = self.tape[self.ptr].wrapping_sub(1),
             '.' => {
-                let ch = {
-                    if self.tape[self.ptr] == 10 {
-                        '\n' as u8
-                    }
-                    else {
-                        self.tape[self.ptr]
-                    }
-                };
+                let ch = if self.tape[self.ptr] == 10 { '\n' as u8 } else { self.tape[self.ptr] };
                 self.stdout.write(&vec![ch]).expect("stdout write failed");
             },
             ',' => {
                 let mut buf: [u8; 1] = [0];
                 self.stdin.read(&mut buf).expect("stdin read failed");
                 
-                self.tape[self.ptr] = {
-                    if buf[0] as char == '\n' {
-                        10
-                    }
-                    else {
-                        buf[0]
-                    }
-                }
+                self.tape[self.ptr] = if buf[0] as char == '\n' { 10 } else { buf[0] };
             },
-            '[' => {
-                if self.tape[self.ptr] == 0 {
-                    self.pc = self.braces[self.pc];
-                }
+            '[' => if self.tape[self.ptr] == 0 {
+                self.pc = self.braces[self.pc];
             },
-            ']' => {
-                if self.tape[self.ptr] != 0 {
-                    self.pc = self.braces[self.pc];
-                }
-            }
+            ']' => if self.tape[self.ptr] != 0 {
+                self.pc = self.braces[self.pc];
+            },
             _ => { /* it's a comment */ }
         }
     }
